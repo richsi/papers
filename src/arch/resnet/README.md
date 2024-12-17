@@ -8,7 +8,7 @@ Increasing the number of layers in a neural network should theoretically increas
 However, deeper networks tend to perform worse or the accuracy saturates without overfitting. This is called degradation.
 
 #### Approach
-Instead of making the network learn the original desired mapping H(x) directly, it learns a residual mapping F(x).
+Instead of making the network learn the original desired mapping H(x) directly, it learns a residual mapping F(x), where:
 F(x) = H(x) - x
 
 #### Key Concepts
