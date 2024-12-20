@@ -13,13 +13,14 @@ import torchvision
 import torchvision.transforms as transforms
 from argparse import ArgumentParser
 from torch.utils.data import random_split
+from torchvision import models
 
 from utils.data_setup import *
 from src.arch.resnet.model import ResNet
 
 def main(args):
   """
-  Train reimplementation ResNet model using ImageNet dataset
+  Train reimplementation ResNet model using CIFAR10 dataset
   """
 
   # Unpacking arguments
@@ -55,9 +56,11 @@ def main(args):
     num_workers=os.cpu_count()
   )
 
-  print(f"Number of training images: {len(train_dataset)}")  # 50,000 images
-  print(f"Number of test images: {len(test_dataset)}")       # 10,000 images
-  print(class_names)
+  # Init the model
+  # model = ResNet()
+
+  print(train_dataset[0][0].shape, train_dataset[0][1])
+  print(models.resnet34())
 
 if __name__ == "__main__":
   parser = ArgumentParser()

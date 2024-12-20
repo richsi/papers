@@ -6,12 +6,18 @@ class ResNet(nn.Module):
   Args:
     
   """
-  def __init__(self):
+  def __init__(self, block):
     super().__init__()
 
-    self.model = nn.Sequential(
+    nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3, bias=False),
+    nn.BatchNorm2d(64),
+    nn.ReLU(inplace=True)
+    nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
 
-    )
+    self.block1 = nn.Sequential()
+    self.block2 = nn.Sequential()
+    self.block3 = nn.Sequential()
+    self.block4 = nn.Sequential()
 
     def forward(self):
       pass
