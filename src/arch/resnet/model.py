@@ -19,14 +19,14 @@ class BasicBlock(nn.Module):
     def forward(self, x):
       identity = x
 
+      if self.downsample is not None:
+        identity = self.downsample(x)
+
       out = self.conv1(x)
       out = self.bn1(out)
       out = self.relu(out)
       out = self.conv2(out)
       out = self.bn2(out)
-
-      if self.downsample is not None:
-        identity = self.downsample(x)
 
       out += identity
       out = self.relu(out)
@@ -37,7 +37,7 @@ class ResNet(nn.Module):
   """
   Assembling ResNet architecture
   """
-  def __init__(self, block):
+  def __init__(self, block, layers, num_classes=10):
     super().__init__()
 
     self.block0 = nn.Sequential(
@@ -47,10 +47,16 @@ class ResNet(nn.Module):
       nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
     )
 
-    self.layer1 = None
+    # res_blocks = [3, 4, 6, 3]
+    self.block1 = _make_layer(block, in_size=64, out_size=64, blocks=layers[0])
+    self.block2 = _make_layer(block, in_size=64, out_size=128, blocks=layers[1], stride=2)
+    self.block3 = _make_layer(block, in_size=128, out_size=256, blocks=layers[2], stride=2)
+    self.block4 = _make_layer(block, in_size=256, out_size=512, blocks=layers[3], stride=2)
 
+    
+    self.fc = nn.Linear(512, num_classes)
 
-    def _make_layer(block, in_size, out_size, layers, stride=1):
+    def _make_layer(block, in_size, out_size, blocks, stride=1):
       kernel_size = 1
       downsample = None
       if stride != 1 or in_size != out_size:
@@ -58,14 +64,12 @@ class ResNet(nn.Module):
           nn.Conv2d(in_size, out_size, kernel_size, stride, bias=False),
           nn.BatchNorm2d(out_size)
         )
-
       # Creating the layers of residual connection blocks
-      blocks = []
-      blocks.append(BasicBlock(in_size, out_size, stride, downsample=downsample))
-      for _ in range(1, layers):
-        blocks.append(BasicBlock(out_size, out_size, stride))
-
-      return blocks
+      layers = []
+      layers.append(block(in_size, out_size, stride, downsample=downsample))
+      for _ in range(1, blocks):
+        layers.append(block(out_size, out_size, stride))
+      return nn.Sequential(*layers)
 
     def forward(self):
       pass
