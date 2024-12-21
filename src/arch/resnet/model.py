@@ -53,7 +53,7 @@ class ResNet(nn.Module):
     self.block3 = _make_layer(block, in_size=128, out_size=256, blocks=layers[2], stride=2)
     self.block4 = _make_layer(block, in_size=256, out_size=512, blocks=layers[3], stride=2)
 
-    
+    self.avgpool = nn.AdaptiveAvgPool2d((1,1))
     self.fc = nn.Linear(512, num_classes)
 
     def _make_layer(block, in_size, out_size, blocks, stride=1):
@@ -71,14 +71,18 @@ class ResNet(nn.Module):
         layers.append(block(out_size, out_size, stride))
       return nn.Sequential(*layers)
 
-    def forward(self):
-      pass
+    def forward(self, x):
+      out = self.block0(x)
+      out = self.block1(out)
+      out = self.block2(out)
+      out = self.block3(out)
+      out = self.block4(out)
+      out = self.avgpool(out)
+      out = self.fc(out)
+      return out
 
-    def train_step(self):
-      pass
 
-    def val_step(self):
-      pass
-
-    def test_step(self):
-      pass
+def resnet34():
+  layers = [3, 4, 6, 3]
+  model = ResNet(BasicBlock, layers)
+  return model

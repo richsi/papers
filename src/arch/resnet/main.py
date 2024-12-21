@@ -16,7 +16,8 @@ from torch.utils.data import random_split
 from torchvision import models
 
 from utils.data_setup import *
-from src.arch.resnet.model import ResNet
+from utils.engine import *
+from src.arch.resnet.model import resnet34
 
 def main(args):
   """
@@ -56,8 +57,8 @@ def main(args):
     num_workers=os.cpu_count()
   )
 
-  # Init the model
-  # model = ResNet()
+  model = resnet34()
+  
 
   print(train_dataset[0][0].shape, train_dataset[0][1])
   print(models.resnet34())
