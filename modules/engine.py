@@ -136,3 +136,46 @@ def train(
     results["val_ac"].append(val_acc)
 
   return results
+
+
+def test(
+  model: torch.nn.Module,
+  test_dataloader: torch.utils.data.DataLoader,
+  loss_fn: torch.nn.Module,
+  epochs: int,
+  device: torch.device
+) -> Dict[str, List]:
+  """ Trains and validates PyTorch model
+
+  Args:
+    model: A PyTorch model to be trained
+    test_dataloader: A DataLoader instance for the model to be tested on
+    loss_fn: A PyTorch loss function to minimize
+    epochs: An integer indicating how many iterations to train for
+    device: A target device to compute on (e.g. "cuda" or "cpu" or "mps")
+
+  Returns:
+    A tuple of training loss and training accuracy metrics
+  """
+
+  results = {
+    "test_loss": [],
+    "test_acc": [],
+  }
+
+  for epoch in tqdm(range(epochs)):
+    test_loss, test_acc = test_step(model=model,
+                                  dataloader=test_dataloader,
+                                  loss_fn=loss_fn,
+                                  device=device) 
+
+    print(
+      f"Epoch: {epoch+1} |"
+      f"test_loss: {test_loss:.4f} |"
+      f"test_acc: {test_acc:.4f} |"
+    )
+
+    results["test_loss"].append(test_loss)
+    results["test_acc"].append(test_acc)
+
+  return results

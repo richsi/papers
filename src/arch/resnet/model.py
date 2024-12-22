@@ -16,21 +16,21 @@ class BasicBlock(nn.Module):
 
     self.downsample = downsample
 
-    def forward(self, x):
-      identity = x
+  def forward(self, x):
+    identity = x
 
-      if self.downsample is not None:
-        identity = self.downsample(x)
+    if self.downsample is not None:
+      identity = self.downsample(x)
 
-      out = self.conv1(x)
-      out = self.bn1(out)
-      out = self.relu(out)
-      out = self.conv2(out)
-      out = self.bn2(out)
+    out = self.conv1(x)
+    out = self.bn1(out)
+    out = self.relu(out)
+    out = self.conv2(out)
+    out = self.bn2(out)
 
-      out += identity
-      out = self.relu(out)
-      return out
+    out += identity
+    out = self.relu(out)
+    return out
 
 
 class ResNet(nn.Module):
@@ -48,38 +48,38 @@ class ResNet(nn.Module):
     )
 
     # res_blocks = [3, 4, 6, 3]
-    self.block1 = _make_layer(block, in_size=64, out_size=64, blocks=layers[0])
-    self.block2 = _make_layer(block, in_size=64, out_size=128, blocks=layers[1], stride=2)
-    self.block3 = _make_layer(block, in_size=128, out_size=256, blocks=layers[2], stride=2)
-    self.block4 = _make_layer(block, in_size=256, out_size=512, blocks=layers[3], stride=2)
+    self.block1 = self._make_layer(block, in_size=64, out_size=64, blocks=layers[0])
+    self.block2 = self._make_layer(block, in_size=64, out_size=128, blocks=layers[1], stride=2)
+    self.block3 = self._make_layer(block, in_size=128, out_size=256, blocks=layers[2], stride=2)
+    self.block4 = self._make_layer(block, in_size=256, out_size=512, blocks=layers[3], stride=2)
 
     self.avgpool = nn.AdaptiveAvgPool2d((1,1))
     self.fc = nn.Linear(512, num_classes)
 
-    def _make_layer(block, in_size, out_size, blocks, stride=1):
-      kernel_size = 1
-      downsample = None
-      if stride != 1 or in_size != out_size:
-        downsample = nn.Sequential(
-          nn.Conv2d(in_size, out_size, kernel_size, stride, bias=False),
-          nn.BatchNorm2d(out_size)
-        )
-      # Creating the layers of residual connection blocks
-      layers = []
-      layers.append(block(in_size, out_size, stride, downsample=downsample))
-      for _ in range(1, blocks):
-        layers.append(block(out_size, out_size, stride))
-      return nn.Sequential(*layers)
+  def _make_layer(self, block, in_size, out_size, blocks, stride=1):
+    kernel_size = 1
+    downsample = None
+    if stride != 1 or in_size != out_size:
+      downsample = nn.Sequential(
+        nn.Conv2d(in_size, out_size, kernel_size, stride, bias=False),
+        nn.BatchNorm2d(out_size)
+      )
+    # Creating the layers of residual connection blocks
+    layers = []
+    layers.append(block(in_size, out_size, stride, downsample=downsample))
+    for _ in range(1, blocks):
+      layers.append(block(out_size, out_size, stride))
+    return nn.Sequential(*layers)
 
-    def forward(self, x):
-      out = self.block0(x)
-      out = self.block1(out)
-      out = self.block2(out)
-      out = self.block3(out)
-      out = self.block4(out)
-      out = self.avgpool(out)
-      out = self.fc(out)
-      return out
+  def forward(self, x):
+    out = self.block0(x)
+    out = self.block1(out)
+    out = self.block2(out)
+    out = self.block3(out)
+    out = self.block4(out)
+    out = self.avgpool(out)
+    out = self.fc(out)
+    return out
 
 
 def resnet34():
