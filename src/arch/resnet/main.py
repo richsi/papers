@@ -80,7 +80,7 @@ def main(args):
 
   utils.save_model(model=model,
                    save_dir=save_dir,
-                   model_name="resnet34.pth")
+                   model_name=f"{name}.pth")
 
   utils.plot_results(results, name)
 

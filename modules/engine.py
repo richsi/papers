@@ -69,7 +69,7 @@ def test_step(
       X, y = X.to(device), y.to(device)
       y_pred = model(X)
       loss = loss_fn(y_pred, y)
-      test_loss += loss
+      test_loss += loss.item()
 
       y_pred_labels = torch.argmax(y_pred, dim=1)
       test_acc += (y_pred_labels == y).sum().item() / len(y_pred_labels)
@@ -133,7 +133,7 @@ def train(
     results["train_loss"].append(train_loss)
     results["train_acc"].append(train_acc)
     results["val_loss"].append(val_loss)
-    results["val_ac"].append(val_acc)
+    results["val_acc"].append(val_acc)
 
   return results
 
