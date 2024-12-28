@@ -1,7 +1,7 @@
 # ML Paper Implementations
 
 ## Arch
-- ResNet
+ResNet34 - trained on CIFAR10 dataset
 
 ## Computer Vision
 
